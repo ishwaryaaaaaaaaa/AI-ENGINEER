@@ -1,0 +1,69 @@
+
+The only part that made me smile a bit is the “linear algebra” section.
+If ML skills are listed as the first topic, then matrix multiplication,
+dot products, matrix rank, and cosine similarity are not really “relevant bits”,
+
+
+
+
+
+
+
+Classical ML (optional, but a plus)
+
+  • Supervised vs unsupervised learning 
+  • Linear regression, logistic regression
+  • SVM, decision trees, random forests
+  • How gradient descent works
+
+You won't get asked this in most entry-level AI engineer interviews, but some companies do go deep on it. Knowing it puts you ahead.
+
+How LLMs work
+
+  • Transformer architecture
+  • Self-attention and multi-head attention
+  • Tokenization: BPE (byte pair encoding), which is what GPT-4, Claude, and LLaMA use
+  • Word embeddings and positional encoding
+  • Encoder-decoder vs decoder-only models
+
+Building with LLM APIs
+
+  • OpenAI, Anthropic, or Gemini APIs
+  • Chat completions, system prompts, message history
+  • Why LLMs are stateless and how to handle memory yourself
+  • Token limits and context window management
+
+Prompt engineering and context engineering
+
+  • Zero-shot, few-shot prompting
+  • Chain-of-thought prompting
+  • KV cache and how it works
+  • Prompt caching: what it is and when it cuts costs
+
+RAG and vector databases
+
+  • What retrieval-augmented generation actually solves
+  • Chunking strategies and embedding models
+  • Vector databases: Pinecone, Weaviate, pgvector
+  • LangChain or LlamaIndex.
+
+AI agents
+
+  • Tool use and function calling
+  • ReAct pattern: Reasoning + action (Thought → Action → Observation loop)
+  • Multi-step planning and agent loops
+  • LangGraph or crew AI 
+  • Where agents break in production
+
+Linear algebra (the relevant bits)
+
+  • Matrix multiplication and dot products
+  • Cosine similarity (this is how vector search works under the hood)
+  • Rank of a matrix, eigenvalues at a surface level
+
+Fine-tuning
+
+  • When to fine-tune vs prompt engineer
+  • PEFT: parameter-efficient fine-tuning
+  • LoRA and QLoRA (both are PEFT methods, QLoRA adds 4-bit quantization on top)
+  • Instruction tuning vs continued pre-training
