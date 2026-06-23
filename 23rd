@@ -1,0 +1,84 @@
+# N Meetings in One Room — My Intuition Log
+
+**Problem:** Given meetings as pairs (start, end), find the maximum number of non-overlapping meetings that can be held in a single room.
+
+Example: `[(0,3), (2,3), (3,4), (1,5)]`
+
+---
+
+## Attempt 1 — "Two pointers, one for start, one for end"
+
+**What I thought:** Treat it like the cookie problem — two pointers, one walking through start times, one walking through end times, moving independently.
+
+**What was wrong:** This problem isn't two separate independent lists (like students and cookies were). Each meeting's start and end are *glued together* — you can't process starts and ends as if they belong to different arrays. The "two pointers on two separate arrays" pattern doesn't apply here at all.
+
+**The fix:** Stop thinking of start and end as two things to track separately with two pointers. Think of each meeting as **one unit** you either accept or reject.
+
+---
+
+## Attempt 2 — "Sort by start time, then compare"
+
+**What I thought:** Since two-pointer problems usually need sorted input, maybe sort meetings by start time and scan through.
+
+**Why it doesn't help:** I traced through `(1,10), (2,3), (4,5)` sorted by start time. After accepting `(1,10)`, the room is blocked until time 10 — neither `(2,3)` nor `(4,5)` can be taken. Sorting by start time doesn't tell you anything useful about how much room capacity is left for the future. A meeting that starts early but ends late blocks everything after it regardless of order.
+
+**The fix:** Sort by **end time** instead. The meeting that frees up the room *soonest* should be considered first — that maximizes what can still fit afterward.
+
+---
+
+## Attempt 3 — "Compare start time against the previous one's start"
+
+**What I said:** "the most recently accepted one should have less start date than the one we are seeing now, if the start time we are seeing right now is lesser than the prev one"
+
+**What was wrong:** I was comparing start-to-start, and got the rejection direction backwards. Walked through `(0,3)` accepted, room free at 3. Candidate `(2,3))` has start = 2. I said "reject if new start < old value" without being clear *which* old value (start or end) I meant, and without handling the **equal case** (`start == room_free_at`).
+
+**The fix:** Realized the comparison isn't start-vs-start. It needs to be the **end time of the last accepted meeting** vs the **start time of the new candidate**.
+
+---
+
+## Attempt 4 — "Check end time of the previous one against starting of the first one"
+
+**What was unclear:** Said "the first one" — ambiguous whether this meant "first meeting in the whole list" or "the most recently accepted meeting." These are NOT the same thing once you start skipping meetings during the scan.
+
+**The fix:** Pinned down the labels precisely:
+- **Value A** = end time of whichever meeting was most recently **accepted** (not "previous in the list" — specifically "previous one I said yes to")
+- **Value B** = start time of the **current candidate** being evaluated right now
+
+This is the moment the comparison became unambiguous: always compare Value A vs Value B, every iteration.
+
+---
+
+## Attempt 5 — "How do we pick the very first one to start with?"
+
+**The real question:** Before any comparing happens, which meeting gets accepted with zero conditions?
+
+**The reasoning:** After sorting by end time, the very first meeting in the list has *nothing accepted before it* — so there's nothing it could possibly conflict with. It gets accepted unconditionally, and its end time becomes the starting value for "room free at."
+
+**The realization:** This isn't a separate special-case step — it falls out naturally from starting the scan at index 0 of the sorted list, where "most recently accepted" is simply undefined/doesn't exist yet.
+
+---
+
+## Final Algorithm (in my own words)
+
+1. **Sort all meetings by end time** (ascending).
+2. **Accept the first meeting automatically** — nothing came before it to conflict with. Set `room_free_at = end time of this meeting`.
+3. **For every meeting after that, in sorted order:**
+   - Compare this meeting's **start time** against `room_free_at`.
+   - If `start >= room_free_at` → **accept** it. Update `room_free_at = this meeting's end time`.
+   - Else → **skip** it. `room_free_at` stays unchanged.
+4. **Count every meeting accepted** — that's the answer.
+
+**Open detail to confirm before coding:** is the boundary condition `start >= room_free_at` or `start > room_free_at`? (i.e., if a meeting starts exactly when the room frees up, is back-to-back allowed?) — confirm this against the problem's exact constraints before finalizing.
+
+---
+
+## The big lesson across all 5 attempts
+
+Each wrong attempt wasn't really "wrong" — it was missing ONE precise detail:
+- Attempt 1 → wrong *pattern* entirely (two separate arrays vs. one unit per meeting)
+- Attempt 2 → wrong *sort key* (start vs end)
+- Attempt 3 → wrong *fields being compared* (start-vs-start instead of end-vs-start)
+- Attempt 4 → wrong *reference point* ("list-previous" vs "last-accepted")
+- Attempt 5 → missing *base case* (what starts the process before any comparison exists)
+
+Getting from a vague intuition to a precise algorithm is mostly about repeatedly asking "wait, which exact value am I comparing, and against which exact other value?" until there's no ambiguity left.
